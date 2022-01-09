@@ -4496,6 +4496,16 @@ void OpenMPOpt::registerAAs(bool IsModulePass) {
   if (!isOpenMPDevice(M))
     return;
 
+  for (auto &GV : M.globals()) {
+    if (GV.getVisibility() == GlobalValue::HiddenVisibility) {
+      GV.setVisibility(GlobalValue::DefaultVisibility);
+      GV.setUnnamedAddr(GlobalValue::UnnamedAddr::None);
+      GV.setDSOLocal(false);
+      GV.setUnnamedAddr(GlobalValue::UnnamedAddr::None);
+      GV.setVisibility(GlobalValue::DefaultVisibility);
+    }
+  }
+
   for (auto *F : SCC) {
     if (F->isDeclaration())
       continue;
